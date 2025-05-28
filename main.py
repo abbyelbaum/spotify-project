@@ -5,11 +5,13 @@ import base64
 import requests
 from dotenv import load_dotenv
 from requests import post, get
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, jsonify, session
 
 load_dotenv()
 
 app = Flask(__name__)
+
+app.secret_key = os.getenv("FLASK_SECRET_KEY", "supersecretkey")
 
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
@@ -39,7 +41,7 @@ def callback():
     data = {
         "grant_type": "authorization_code",
         "code": code,
-        "redirect_uri": redirect_uri,  # 👈 Key fixed
+        "redirect_uri": redirect_uri,
         "client_id": client_id,
         "client_secret": client_secret,
     }
@@ -51,23 +53,24 @@ def callback():
         return f"Error getting access token: {token_info}", 400
 
     access_token = token_info["access_token"]
+    session['access_token'] = access_token  # Store token in session
+
+    # Redirect to Vue frontend
+    return redirect("https://your-vue-frontend-url.com")  # Replace with actual frontend URL
+
+@app.route("/api/user")
+def api_user():
+    access_token = session.get('access_token')
+    if not access_token:
+        return jsonify({"error": "No access token. Please log in."}), 401
 
     user_info = get_user_data(access_token)
     recently_played = get_recently_played(access_token)
 
-    html = f"<h1>Welcome, {user_info['display_name']}</h1>"
-    html += f"<p>Email: {user_info['email']}</p>"
-
-    if recently_played and "items" in recently_played:
-        html += "<h2>Recently Played Tracks:</h2><ul>"
-        for item in recently_played["items"]:
-            track = item["track"]
-            html += f"<li>{track['name']} by {', '.join([artist['name'] for artist in track['artists']])}</li>"
-        html += "</ul>"
-    else:
-        html += "<h2>No recently played tracks found.</h2>"
-
-    return html
+    return jsonify({
+        "user": user_info,
+        "recently_played": [item["track"] for item in recently_played["items"]] if recently_played and "items" in recently_played else []
+    })
 
 def get_auth_header(token):
     return {"Authorization": "Bearer " + token}
