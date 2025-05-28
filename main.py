@@ -135,5 +135,5 @@ def get_recently_played(token):
 
 
 if __name__ == "__main__":
-    app.run(port=8080)
-    print(get_user_data(get_token()))
+    port = int(os.environ.get("PORT", 8080))  # Default to 8080 if PORT not set
+    app.run(host="0.0.0.0", port=port)
