@@ -6,10 +6,14 @@ import requests
 from dotenv import load_dotenv
 from requests import post, get
 from flask import Flask, request, redirect, jsonify, session
+from flask_cors import CORS
 
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True, origins=[
+    "http://localhost:5173",
+])
 
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "supersecretkey")
 
