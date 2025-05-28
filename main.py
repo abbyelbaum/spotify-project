@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 client_id = os.getenv("CLIENT_ID")
 client_secret = os.getenv("CLIENT_SECRET")
-redirect_uri = "https://bffb-2607-fb91-db0-8951-111f-e121-59b4-a9e8.ngrok-free.app/callback"
+redirect_uri = "https://spotify-project-vb7f.onrender.com/callback"
 
 scopes = "user-read-private user-read-email user-read-recently-played user-top-read user-read-playback-state"
 
