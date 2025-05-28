@@ -60,7 +60,7 @@ def callback():
     session['access_token'] = access_token  # Store token in session
 
     # Redirect to Vue frontend
-    return redirect("https://your-vue-frontend-url.com")  # Replace with actual frontend URL
+    return redirect("http://localhost:5173")  # Replace with actual frontend URL
 
 @app.route("/api/user")
 def api_user():
