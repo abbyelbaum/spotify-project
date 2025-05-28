@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spotify Info</title>
+</head>
+<body>
+    <h1>Welcome to My Spotify App</h1>
+    <button id="loginButton">Login with Spotify</button>
+    <div id="userInfo"></div>
+
+    <script>
+        document.getElementById("loginButton").onclick = () => {
+            window.location.href = "/";
+        };
+
+        window.onload = async () => {
+            const params = new URLSearchParams(window.location.search);
+            if(params.has("code")) {
+                document.getElementById("userInfo").innerHTML = "Loading...";
+                const res = await fetch(`callback?code=${params.get("code")}`);
+                const html = await res.text();
+                document.body.innerHTML = html;
+            }
+        }
+    </script>
+</body>
+</html>
